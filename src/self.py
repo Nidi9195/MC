@@ -8,10 +8,10 @@ import self_read_data as rd
 Check gru1 as gru vs dynamic rnn '''
 
 batch_size    = 4
-learning_rate = 0.003
+learning_rate = 0.005
 n_epoch       = 50
-n_samples     = 1000                              
-cv_split      = 0.2                             
+n_samples     = 100                             
+cv_split      = 0.7                             
 train_size    = int(n_samples * cv_split)                               
 test_size     = n_samples - train_size
 
@@ -123,8 +123,19 @@ if __name__ == '__main__':
                 #sys.exit()
                 sess.run(train_op, feed_dict=train_input_dict)
 
-            if (i%10 == 0):
+            if (i%5 == 0):
                 cs  = sess.run([cost], feed_dict = train_input_dict)
                 print("Epoch",i,"Cost :",cs)
+
+        X_test = rd.get_melspectrograms_indexed(test_indices)
+
+        test_input_dict = {X: X_test[test_indices],
+                           y: y_test[test_indices]
+                           }
+        predictions = sess.run(predict_op, feed_dict=test_input_dict)
+        print('Epoch : ', i,  'AUC : ', sm.roc_auc_score(y_test[test_indices], predictions, average='samples'))
+
+
+        
 
     

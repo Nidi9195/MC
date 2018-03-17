@@ -26,7 +26,8 @@ def log_scale_melspectrogram(path, plot=False):
 
     #melspect = lb.logamplitude(lb.feature.melspectrogram(y=signal, sr=Fs, hop_length=N_OVERLAP, n_fft=N_FFT, n_mels=N_MELS)**2, ref_power=1.0)
     S = lb.feature.melspectrogram(y=signal, sr=Fs, hop_length=N_OVERLAP, n_fft=N_FFT, n_mels=N_MELS)**2
-    melspect = 10 * np.log10(S/1.0)    
+    melspect = 10 * np.log10(S/1.0)
+    print("Returning single spectrogram")
 
     return melspect
 
@@ -35,6 +36,7 @@ def get_labels(labels_dense=labels['label'], num_classes=10):
     index_offset = np.arange(num_labels) * num_classes
     labels_one_hot = np.zeros((num_labels, num_classes))
     labels_one_hot.flat[index_offset + labels_dense.ravel()] = 1
+    print("Returning one hot encoded labels")
     return labels_one_hot
 
 def get_melspectrograms(labels_dense=labels, num_classes=10):
@@ -45,6 +47,7 @@ def get_melspectrograms(labels_dense=labels, num_classes=10):
 def get_melspectrograms_indexed(index, labels_dense=labels, num_classes=10):
     spectrograms = np.asarray([log_scale_melspectrogram(i) for i in labels_dense['path'][index]])
     spectrograms = spectrograms.reshape(spectrograms.shape[0], spectrograms.shape[1], spectrograms.shape[2], 1)
+    print("Returning collection of spectrograms")
     return spectrograms
 
 
