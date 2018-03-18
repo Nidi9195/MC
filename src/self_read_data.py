@@ -25,8 +25,9 @@ def log_scale_melspectrogram(path, plot=False):
         signal = signal[int((n_sample-n_sample_fit)/2):int((n_sample+n_sample_fit)/2)]
 
     #melspect = lb.logamplitude(lb.feature.melspectrogram(y=signal, sr=Fs, hop_length=N_OVERLAP, n_fft=N_FFT, n_mels=N_MELS)**2, ref_power=1.0)
-    S = lb.feature.melspectrogram(y=signal, sr=Fs, hop_length=N_OVERLAP, n_fft=N_FFT, n_mels=N_MELS)**2
-    melspect = 10 * np.log10(S/1.0)
+    melspect = lb.power_to_db(lb.feature.melspectrogram(y=signal, sr=Fs, hop_length=N_OVERLAP, n_fft=N_FFT, n_mels=N_MELS)**2)
+    #S = lb.feature.melspectrogram(y=signal, sr=Fs, hop_length=N_OVERLAP, n_fft=N_FFT, n_mels=N_MELS)**2
+    #melspect = 10 * np.log10(S/1.0)
     #print("Returning single spectrogram")
 
     return melspect

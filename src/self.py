@@ -34,9 +34,9 @@ if __name__ == '__main__':
     labels = rd.get_labels()
     #1000 x 10 one hot encoded in order
 
-    #X_test = rd.get_melspectrograms_indexed(test_indices) #returns [test_indices_size, 96, 1366, 1]
+    X_test = rd.get_melspectrograms_indexed(test_indices) #returns [test_indices_size, 96, 1366, 1]
     y_train = labels[train_indices]
-    #y_test = labels[test_indices]
+    y_test = labels[test_indices]
     print("Y done")
 
     weights = {
