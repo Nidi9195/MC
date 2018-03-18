@@ -10,7 +10,8 @@ print("Done importing")
 batch_size    = 4
 learning_rate = 0.003
 n_epoch       = 50
-n_samples     = 50                              # change to 1000 for entire dataset
+n_total       = 1000
+n_samples     = 100                              # change to 1000 for entire dataset
 cv_split      = 0.8                             
 train_size    = int(n_samples * cv_split)                               
 test_size     = n_samples - train_size
@@ -64,15 +65,17 @@ def sort_result(tags, preds):
 
 if __name__ == '__main__':
     print("Beginning")
-    indices = np.arange(n_samples)
-    np.random.shuffle(indices)
+    #indices = np.arange(n_samples)
+    #indices = np.arange(n_total)
+    #np.random.shuffle(indices)
+    indices = np.random.randint(n_total, size=n_samples)
     train_indices = indices[0:train_size]
     test_indices  = indices[train_size:]
     print("Indices ready")
 
     labels = rd.get_labels()
 
-    #X_test = rd.get_melspectrograms_indexed(test_indices)
+    X_test = rd.get_melspectrograms_indexed(test_indices)
     y_train = labels[train_indices]
     y_test = labels[test_indices]
     print("y ready")
@@ -126,6 +129,8 @@ if __name__ == '__main__':
         
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_, labels=y))
     train_op = tf.train.RMSPropOptimizer(learning_rate, 0.9).minimize(cost)
+    #optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
+    #train_op = optimizer.minimize(cost)
     predict_op = y_
 
     tags = ['blues', 'classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock']
@@ -146,15 +151,15 @@ if __name__ == '__main__':
             mm = sess.run([cost], feed_dict=train_input_dict)
             print("Cost:",mm)
 
-        #test_indices = np.arange(len(X_test))
-        #np.random.shuffle(test_indices)
-        #test_indices = test_indices[0:test_size]
-        X_test = rd.get_melspectrograms_indexed(test_indices)
+            test_indices = np.arange(len(X_test))
+            np.random.shuffle(test_indices)
+            test_indices = test_indices[0:test_size]
+            #X_test = rd.get_melspectrograms_indexed(test_indices)
 
-        test_input_dict = {X: X_test[test_indices],
-                           y: y_test[test_indices]
-                           }
-        predictions = sess.run(predict_op, feed_dict=test_input_dict)
-        print('Epoch : ', i,  'AUC : ', sm.roc_auc_score(y_test[test_indices], predictions, average='samples'))
+            test_input_dict = {X: X_test[test_indices],
+                               y: y_test[test_indices]
+                               }
+            predictions = sess.run(predict_op, feed_dict=test_input_dict)
+            print('Epoch : ', i,  'AUC : ', sm.roc_auc_score(y_test[test_indices], predictions, average='samples'))
             #print(i, np.mean(np.argmax(y_test[test_indices], axis=1) == predictions))
             #print(sort_result(tags, predictions)[:5])

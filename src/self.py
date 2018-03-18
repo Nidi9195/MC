@@ -122,20 +122,23 @@ if __name__ == '__main__':
                 #print("SHAPE!",m)
                 #sys.exit()
                 sess.run(train_op, feed_dict=train_input_dict)
+            mm = sess.run([cost], feed_dict=train_input_dict)
+            print("Cost:",mm)
 
-            if (i%5 == 0):
-                cs  = sess.run([cost], feed_dict = train_input_dict)
-                print("Epoch",i,"Cost :",cs)
+            test_indices = np.arange(len(X_test))
+            np.random.shuffle(test_indices)
+            test_indices = test_indices[0:test_size]
+            #X_test = rd.get_melspectrograms_indexed(test_indices)
 
-        X_test = rd.get_melspectrograms_indexed(test_indices)
+            test_input_dict = {X: X_test[test_indices],
+                               y: y_test[test_indices]
+                               }
+            predictions = sess.run(predict_op, feed_dict=test_input_dict)
+            print('Epoch : ', i,  'AUC : ', sm.roc_auc_score(y_test[test_indices], predictions, average='samples'))
+            #print(i, np.mean(np.argmax(y_test[test_indices], axis=1) == predictions))
+            #print(sort_result(tags, predictions)[:5])
 
-        test_input_dict = {X: X_test[test_indices],
-                           y: y_test[test_indices]
-                           }
-        predictions = sess.run(predict_op, feed_dict=test_input_dict)
-        print('Epoch : ', i,  'AUC : ', sm.roc_auc_score(y_test[test_indices], predictions, average='samples'))
-
-
+            
         
 
     
